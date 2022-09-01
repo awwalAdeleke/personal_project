@@ -1,0 +1,193 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="{% static 'jobs/css/styles.css' %}">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+    <style>
+        {% block css_content %}
+            *{
+                margin: 0;
+                box-sizing: border-box;
+                color: #22417B;
+            }
+
+            .navbar{
+                background-color: #22417B;
+            }
+
+            .nav-item > a{
+                text-align: right;
+                margin-top: 10px;
+                border-bottom: 1px solid #fff;
+            }
+
+            .nav-item a:hover, .nav-item a:focus{
+                background-color: #22417B;
+            }
+        {% endblock %}
+    </style>
+
+    <title>
+        {% block title %}
+
+        {% endblock %}
+    </title>
+
+</head>
+<body style="background-color: #A4B3E8;">
+    <nav class="navbar navbar-expand-lg" style="background-color: #22417B; padding: 20px 30px;">
+
+        <div class="container-fluid">
+          <a class="navbar-brand" href="{% url 'home' %}"
+         style="font-weight: 900;
+         color: #fff;
+         font-family: 'Raleway', sans-serif;">
+              Jobberguy
+          </a>
+
+          <button class="navbar-toggler" type="button"
+                  data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                  aria-controls="navbarSupportedContent" aria-expanded="false"
+                  aria-label="Toggle navigation"
+                  style="background-color: white;">
+              <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+              <ul class="navbar-nav ml-auto mb-2 mb-lg-0" style="font-weight: 700;">
+                  <li class="nav-item">
+                      <a class="nav-link" href="{% url 'home' %}"
+                         style="color: #fff;
+                        padding-right: 20px;
+                        font-family: 'Raleway', sans-serif;
+                        text-align: right;
+                        margin-top: 10px;
+                        border-bottom: 1px solid #fff;">Home</a>
+                  </li>
+                  <li class="nav-item">
+                      <a class="nav-link" href="{% url 'job_list' %}"
+                         style="color: #fff;
+                        font-family: 'Raleway', sans-serif;
+                        padding-right: 20px;
+                        text-align: right;
+                        margin-top: 10px;
+                        border-bottom: 1px solid #fff;">Jobs</a>
+                  </li>
+
+
+
+              {% if user.is_authenticated %}
+                <li class="nav-item">
+                  <a class="nav-link" href="{% url 'add_job' %}"
+                     style="color: #fff;
+                    font-family: 'Raleway', sans-serif;
+                    padding-right: 20px;
+                    text-align: right;
+                    margin-top: 10px;
+                    border-bottom: 1px solid #fff;">Post Job</a>
+                </li>
+
+                <li class="nav-item">
+                  <a class="nav-link" href="{% url 'logout' %}"
+                     style="color: #fff;
+                    font-family: 'Raleway', sans-serif;
+                    padding-right: 20px;
+                    text-align: right;
+                    margin-top: 10px;
+                    border-bottom: 1px solid #fff;">Sign Out</a>
+                </li>
+
+                    {% else %}
+                    <li class="nav-item">
+                      <a class="nav-link" href="{% url 'login' %}"
+                         style="color: #fff;
+                        font-family: 'Raleway', sans-serif;
+                        padding-right: 20px;
+                        text-align: right;
+                        margin-top: 10px;
+                        border-bottom: 1px solid #fff;">Sign In</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" href="{% url 'register' %}"
+                         style="color: #fff;
+                        font-family: 'Raleway', sans-serif;
+                        padding-right: 20px;
+                        text-align: right;
+                        margin-top: 10px;
+                        border-bottom: 1px solid #fff;" >Sign Up</a>
+                    </li>
+                    {% endif %}
+                </ul>
+
+          </div>
+        </div>
+    </nav>
+    <div class="container-fluid" style="background-color: #A4B3E8; padding: 30px 20px;">
+        {% block content %}
+
+        {% endblock %}
+        {% block pagination %}
+        {% if is_paginated %}
+            <div class="pagination">
+                <span class="page-links">
+                    {% if page_obj.has_previous %}
+                        <a href="{{ request.path }}?page={{ page_obj.previous_page_number }}">previous</a>
+                    {% endif %}
+                    <span class="page-current">
+                        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+                    </span>
+                    {% if page_obj.has_next %}
+                        <a href="{{ request.path }}?page={{ page_obj.next_page_number }}">next</a>
+                    {% endif %}
+                </span>
+            </div>
+        <br><br><br>
+
+        {% endif %}
+        {% endblock %}
+    </div>
+    <footer style="width: 100%;
+           position: relative;
+           bottom: 0;
+           background-color: #fff;
+           color: #22417B;
+           padding: 20px 40px;
+           display: flex;
+           justify-content: space-between;
+           ">
+        <div class="company-header">
+            <h3>JOBBERGUY</h3>
+            <p>Trusted and tested.</p>
+        </div>
+        <div class="socials" style="display: grid; grid-template-areas: 'first first first . . . . . . . .'
+                                                         '. . . . second second second . . . .'
+                                                         '. . . . . . . . third third third';">
+            <div class="twitter" style="grid-area: first;">
+                <a href="" style="text-decoration: none; color: #22417B;">Follow us on Twitter</a>
+            </div>
+            <div class="github" style="grid-area: second;">
+                <a href="" style="text-decoration: none; color: #22417B;">...Github</a>
+            </div>
+            <div class="linkedin" style="grid-area: third;">
+                <a href="" style="text-decoration: none; color: #22417B;">...LinkedIn</a>
+            </div>
+        </div>
+    </footer>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
+            integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa"
+            crossorigin="anonymous"></script>
+</body>
+</html>

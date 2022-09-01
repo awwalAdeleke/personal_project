@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+    {% for jobvacancy in jobvacancy_list %}
+        <div class="jumbotron">
+            <div class="jumbotron-header">
+                <div class="company-logo">
+                    <a href="{% url 'job_detail' jobvacancy.pk %}"><img src="{{ jobvacancy.company_logo.url }}" alt="company-logo"></a>
+                </div>
+                <div class="company-details">
+                    <p>{{ jobvacancy.position }}</p>
+                    <p>{{ jobvacancy.company_name }}</p>
+                    <p>{{ jobvacancy.address }} ({{ jobvacancy.location }})</p>
+                </div>
+            </div>
+            <div>
+                <div class="applicant-number">
+                    <img src="{% static 'jobs/img/icon-apply/icons8-apply-50.png' %}"
+                         alt="Numbers of applicants" width="24" height="24"> 23 applied
+                </div>
+                <div class="time-elapsed">
+                    <img src="{% static 'jobs/img/icon-time-machine/icons8-time-machine-45(-hdpi).png' %}"
+                         alt="Time elapsed" width="24" height="24"> {{ jobvacancy.created|timesince }} ago
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+
+{% endblock %}

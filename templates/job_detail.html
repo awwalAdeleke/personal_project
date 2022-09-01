@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    {{ job.company_name }}: {{ job.position }}
+{% endblock %}
+
+{% block content %}
+    <div class="position" style="margin: 30px;">
+        <h1>{{ job.position }}</h1>
+    </div>
+    <div class="position-brief">
+        <div class="company-logo">
+            <img src="{{ job.company_logo.url }}" alt="">
+        </div>
+        <div class="position-info">
+            <div class="company-name">{{ job.company_name }}</div>
+            <div class="company-address">{{ job.address }}</div>
+            <div class="experience">{{ job.experience_level }}</div>
+            <div class="period">{{ job.employee_type }}</div>
+        </div>
+    </div>
+
+    <div class="date_posted">{{ job.created }}</div>
+    <div class="date_expired">{{ job.expiry_date }}</div>
+    <hr style="color: #fff">
+
+    <div class="job-description">
+        <p>{{ job.description|safe }}</p>
+    </div>
+
+    <div class="buttons">
+
+        <div class="like-comment">
+            <div class="like">
+                {% if like %}
+                <img src="{% static 'jobs/img/icon-love-fill/icons8-love-96.png' %}"
+                     alt="Liked" width="60" height="60"> liked
+                    {% else %}
+                <img src="{% static 'jobs/img/icon-love-no-fill/icons8-love-96.png' %}"
+                     alt="Not Liked" width="60" height="60"> like
+                {% endif %}
+            </div>
+            <div class="comment">
+                <img src="{% static 'jobs/img/icon-comment/Android/icons8-comments-96(-xxxhdpi).png' %}"
+                     alt="Comment" width="60" height="60"> comment
+            </div>
+        </div>
+    </div>
+
+    <h3>Comments</h3>
+    {% for comment in comments %}
+        <div class="comment-jumbotron"
+         style="width: 50%;
+         height: 150px;
+         background: #fff;
+         color: #22417B;
+         border-radius: 5px;
+         padding: 20px;
+         margin: 20px auto;">
+            <div class="comment-header" style="display: flex; justify-content: space-between;">
+                <div class="comment_author">
+                    <p style="text-decoration: underline; font-size: 20px;"><b>{{ comment.comment_author }}</b></p>
+                </div>
+                <small>Posted on: {{ comment.created }} </small>
+            </div>
+            <p class="comment_detail">{{ comment.comment_message }}</p>
+            {% if request.user.is_authenticated %}
+                <form action="{% url 'hide_comment' comment.pk %}" method="post">
+                    {% csrf_token %}
+                    {% if comment.is_hidden %}
+                    <input type="submit" class="btn btn-success" value="Restore">
+                    {% else %}
+                    <input type="submit" class="btn btn-danger" value="Hide">
+                    {% endif %}
+                </form>
+            {% endif %}
+
+        </div>
+    {% endfor %}
+
+
+
+
+
+
+{% endblock %}

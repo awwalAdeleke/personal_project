@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    {% if page == 'login' %}
+        Employer Login
+    {% else %}
+        Employer Register
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    {% if page == 'login' %}
+        <h2 style="margin-left: 50px;">Login...</h2>
+    {% else %}
+        <h2 style="margin-left: 50px;">Register...</h2>
+    {% endif %}
+    {% if messages %}
+        <ul class="messages" style=" margin-left: 35%;">
+        {% for message in messages %}
+            <li style="list-style: none; font-size: 20px;">{{ message }}</li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+
+    {% if page == 'login' %}
+    <div>
+        <form method="post" action="" style="margin: 50px;">
+            {% csrf_token %}
+
+            <label for="username">Username</label>
+            <input type="text"
+                   name="username"
+                   id="username"
+                   placeholder="Enter username"
+                   class="form-control"
+                   required>
+            <br>
+            <label for="password">Password</label>
+            <input type="password"
+                   name="password"
+                   id="password"
+                   placeholder="Enter password"
+                   class="form-control"
+                   required>
+            <br>
+            <input type="submit" class="form-control"
+             style="background-color: #22417B;
+             color: white;
+             font-size: 20px;
+             margin: 50px auto;
+             border: none;
+             width: 300px;
+             height: 50px;" value="Login">
+
+        </form>
+        <div class="login" style="text-align: center; font-size: 15px;">
+            <p>Haven't Signed up yet?</p>
+            <a href="{% url 'register' %}">Sign up</a>
+        </div>
+
+    </div>
+    {% else %}
+    <div>
+        <form method="post" action="" style="margin: 50px;">
+            {% csrf_token %}
+            {{ form.as_p }}
+
+            <input type="submit" class="form-control"
+             style="background-color: #22417B;
+             color: white;
+             font-size: 20px;
+             margin: 50px auto;
+             border: none;
+             width: 300px;
+             height: 50px;" value="Register">
+        </form>
+        <div class="login" style="text-align: center; font-size: 15px;">
+            <p>Already Signed up yet?</p>
+            <a href="{% url 'login' %}">Sign In</a>
+        </div>
+
+    </div>
+
+
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,203 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    Jobberguy: Welcome
+{% endblock %}
+
+{% block css_content %}
+    .slide{
+        font-size: 20px;
+        font-family: 'Raleway', sans-serif;
+        color: #22417B;
+        padding: 20px 50px 0 50px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto;
+    }
+
+    .white-text{
+        color: #fff;
+    }
+
+    .big-text{
+        font-size: 40px;
+        font-weight: bold;
+    }
+
+    img{
+        width:332px;
+        height:332px;
+
+        align-self: center;
+    }
+
+    .words{
+        display: grid;
+        padding: 15%;
+    }
+
+    .jumbotron{
+
+    }
+
+{% endblock %}
+
+{% block content %}
+    <div class="slide">
+        <div class="illustration" style="margin: auto;">
+            <img src="{% static "jobs/img/illustration1.png" %}"
+                 alt="Illustration">
+        </div>
+        <div class="words">
+            <div class="word1">
+                WELCOME TO
+                <span class="big-text">
+                    <span class="white-text">
+                        JOBBERGUY.
+                    </span>
+                </span>
+            </div>
+            <div class="word2" style="text-align: right">
+                <span class="white-text">
+                    YOUR FASTEST ACCESS TO
+                </span>
+                <span class="big-text">
+                    JOBS.
+                </span>
+            </div>
+        </div>
+    </div>
+    <div class="slide">
+        <div class="words">
+            <div class="word1">
+                WHERE YOU CAN ALWAYS
+                <span class="big-text">
+                    <span class="white-text">
+                        FIND
+                    </span>
+                </span>
+            </div>
+            <div class="word2" style="text-align: right">
+                <span class="white-text">
+                     ALL THE ROLES AND PROFESSIONS YOU
+                </span>
+                <span class="big-text">
+                    NEED.
+                </span>
+            </div>
+        </div>
+        <div class="illustration"  style="margin: auto;">
+            <img src="{% static "jobs/img/illustration2.png" %}"
+                 alt="Illustration">
+        </div>
+    </div>
+    <div class="slide">
+        <div class="illustration"  style="margin: auto;">
+            <img src="{% static "jobs/img/illustration3.png" %}"
+                 alt="Illustration">
+        </div>
+        <div class="words">
+            <div class="word1">
+                CONNECT WITH THE BEST
+                <span class="big-text">
+                    <span class="white-text">
+                        COMPANIES
+                    </span>
+                </span>
+            </div>
+            <div class="word2" style="text-align: right">
+                <span class="white-text">
+                      AND SECURE YOUR DREAM
+                </span>
+                <span class="big-text">
+                    JOB.
+                </span>
+            </div>
+        </div>
+    </div>
+    <div style="text-align: center;">
+        <h1 style="color: #22417B; margin: 20px;">Search for Jobs</h1>
+        <form method="get" action="">
+            <input type="search" placeholder="Search Jobs..." id="q" name="q"
+            style="width: 45%;
+                   height: 50px;
+                   border-radius: 8px;
+                   font-family: 'Raleway', sans-serif;
+                   padding-left: 20px;
+                   border: none;
+                   outline: none;">
+        </form>
+        {% if jobs %}
+            <p>There are {{ job_count }} jobs available.</p>
+            <div style="display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            column-gap: 30px;
+            row-gap: 30px;
+            margin: auto;">
+            {% for job in jobs %}
+
+                    <div class="jumbotron" style="text-align: left;
+                    width: 400px;
+                    height: 190px;
+                    margin: auto;
+                    padding: 10px;">
+                        <div class="container-fluid">
+                            <div class="jumbotron-header"
+                             style="display: grid;
+                             grid-template-columns: 1fr 2fr;
+                             column-gap: 20px;
+                             margin-bottom: 15px;">
+                                <div class="company-logo" style="width: 80px;
+                                height: 80px;
+                                display: flex;
+                                place-content: center;
+                                background-color: white;
+                                text-align: center;">
+                                    <img src="{{ job.company_logo.url }}" alt="company-logo"
+                                    style="width: 60px;
+                                    height: 17px;
+                                    margin: auto;">
+                                </div>
+                                <div class="company-details">
+                                    <p style="margin: 5px;">
+                                        <a href="{% url 'job_detail' job.pk %}">
+                                            <b>{{ job.position.upper }}</b>
+                                        </a>
+                                    </p>
+                                    <p style="margin: 5px;"><b>{{ job.company_name }}</b></p>
+                                    <p style="margin: 5px;">{{ job.address }} (<b>{{ job.location }}</b>)</p>
+                                </div>
+                            </div>
+                            <div style="line-height: 30px;">
+                                <div class="applicant-number">
+                                    <img src="{% static 'jobs/img/icon-apply/icons8-apply-50.png' %}"
+                                         alt="Numbers of applicants"
+                                         style="width: 24px;
+                                         height: 24px;">
+                                    <small>23 applied</small>
+                                </div>
+                                <div class="time-elapsed">
+                                    <img src="{% static 'jobs/img/icon-time-machine/icons8-time-machine-45(-hdpi).png' %}"
+                                     alt="Time elapsed"
+                                     style="width: 24px;
+                                     height: 24px;">
+                                    <small>{{ job.created|timesince }} ago</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+            {% endfor %}
+            </div>
+            {% else %}
+            <h3 style="padding-top: 30px;">Hello, our esteemed visitor! There are no jobs available!</h3>
+
+
+        {% endif %}
+
+
+
+    </div>
+{% endblock %}
