@@ -1,20 +1,21 @@
 from datetime import datetime, time, date, timedelta
 
 from ckeditor.fields import RichTextField
+from ckeditor_uploader.fields import RichTextUploadingField
 from django.contrib.auth.models import User
 from django.db import models
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 
 
 # Create your models here.
 class ActiveManager(models.Manager):
     def get_queryset(self):
-        return super(ActiveManager, self).get_queryset().filter(is_expired=False)
+        return super(ActiveManager, self).get_queryset().filter(expiry_date__gt=date.today())
 
 
 class ExpiredManager(models.Manager):
     def get_queryset(self):
-        return super(ExpiredManager, self).get_queryset().filter(is_expired=True)
+        return super(ExpiredManager, self).get_queryset().filter(expiry_date__lt=date.today())
 
 
 class VisibleManager(models.Manager):
@@ -58,8 +59,10 @@ class JobVacancy(models.Model):
     location = models.ForeignKey(Location, on_delete=models.SET_NULL, null=True, blank=True)
     employee_type = models.ForeignKey(EmployeeType, on_delete=models.SET_NULL, null=True, blank=True)
     experience_level = models.ForeignKey(ExperienceLevel, on_delete=models.SET_NULL, null=True, blank=True)
-    description = RichTextField()
+    description = RichTextUploadingField()
+    apply_url = models.URLField(blank=True, null=True)
     expiry_date = models.DateField()
+    likes = models.ManyToManyField(User, related_name="job", blank=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
@@ -75,12 +78,15 @@ class JobVacancy(models.Model):
     def __str__(self):
         return self.position
 
-    @property
-    def is_expired(self):
-        return bool(self.expiry_date and date.today() > self.expiry_date)
+    def total_likes(self):
+        return self.likes.count()
+
+    # @property
+    # def is_expired(self):
+    #     return bool(self.expiry_date and date.today() > self.expiry_date)
 
     def get_absolute_url(self):
-        return reverse('job_detail')
+        return reverse_lazy('job_detail', args=[str(self.pk)])
 
 
 class Comment(models.Model):

@@ -6,49 +6,114 @@
 {% endblock %}
 
 {% block content %}
-    <div class="position" style="margin: 30px;">
+    <div class="position" style="margin: 30px 0; border: 2px solid #22417B; width: fit-content; padding: 10px;">
         <h1>{{ job.position }}</h1>
     </div>
-    <div class="position-brief">
-        <div class="company-logo">
-            <img src="{{ job.company_logo.url }}" alt="">
+    <div class="position-brief"
+     style="display: grid;
+     margin-bottom: 40px;
+     grid-template-columns: 1fr 3fr;">
+        <div class="company-logo"
+         style="width: 320px;
+         height: 320px;
+         display: flex;
+         align-items: center;
+         justify-content: center;
+         background-color: white;">
+            <img src="{{ job.company_logo.url }}" alt="Company Logo"
+            style="width: 240px;
+            height: 68px;">
         </div>
-        <div class="position-info">
-            <div class="company-name">{{ job.company_name }}</div>
-            <div class="company-address">{{ job.address }}</div>
-            <div class="experience">{{ job.experience_level }}</div>
-            <div class="period">{{ job.employee_type }}</div>
+        <div class="position-info"
+         style="font-size: 30px;
+         margin-left: 40px;
+         display: flex;
+         flex-direction: column;
+         justify-content: space-between">
+            <div class="company-name">
+                <span>
+                    <img src="{% static 'jobs/img/icon-white-company/icons8-new-company-100.png' %}" alt="building"
+                     style="width: 50px;">
+                </span>{{ job.company_name }}
+            </div>
+            <div class="company-address">
+                <span>
+                    <img src="{% static 'jobs/img/icon-address-white/icons8-address-100.png' %}" alt="address"
+                    style="width: 50px;">
+                </span>{{ job.address }} (<b>{{ job.location }}</b>)
+            </div>
+            <div class="experience">
+                <span>
+                    <img src="{% static 'jobs/img/icon-experience-skill-white/icons8-experience-skill-100.png' %}" alt="address"
+                    style="width: 50px;">
+                </span>{{ job.experience_level }}
+            </div>
+            <div class="period">
+                <span>
+                    <img src="{% static 'jobs/img/icon-delivery-time2/icons8-delivery-time-64 (1).png' %}" alt="address"
+                    style="width: 50px;">
+                </span>{{ job.employee_type }}
+            </div>
         </div>
     </div>
 
-    <div class="date_posted">{{ job.created }}</div>
-    <div class="date_expired">{{ job.expiry_date }}</div>
-    <hr style="color: #fff">
+    <div class="date_posted" style="font-size: 20px;">Posted on: <b>{{ job.created }}</b></div>
+    <div class="date_expired" style="font-size: 20px;">Expires on: {{ job.expiry_date }} (<b>{{ job.expiry_date|timeuntil }} to go...</b>)</div>
+    <hr style="color: #fff; margin: 40px 0;">
 
     <div class="job-description">
         <p>{{ job.description|safe }}</p>
     </div>
 
-    <div class="buttons">
+    <div class="buttons" style="display: flex; justify-content: space-between; margin-top: 50px;">
+        <div class="apply">
+            <form action="{{ job.apply_url }}" method="get">
+                <input type="submit" value="APPLY"
+                style="width: 100px;
+                height: 50px;
+                font-size: 18px;
+                font-weight: bold;
+                border: 2px solid #22417B;
+                background-color: white;
+                color: #22417B;
+                border-radius: 8px;">
+            </form>
+        </div>
 
         <div class="like-comment">
             <div class="like">
-                {% if like %}
-                <img src="{% static 'jobs/img/icon-love-fill/icons8-love-96.png' %}"
-                     alt="Liked" width="60" height="60"> liked
-                    {% else %}
-                <img src="{% static 'jobs/img/icon-love-no-fill/icons8-love-96.png' %}"
-                     alt="Not Liked" width="60" height="60"> like
-                {% endif %}
+                <form action="{% url 'like_job' job.pk %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" value="{{ job.pk }}" style="border: none;
+                    background-color: transparent;">
+                        {% if like %}
+                        <img src="{% static 'jobs/img/icon-love-fill/icons8-love-96.png' %}"
+                             alt="Liked"
+                             style="border: none;
+                             width: 60px;
+                             height: 60px;"> liked
+                        {% else %}
+                        <img src="{% static 'jobs/img/icon-love-no-fill/icons8-love-96.png' %}"
+                             alt="Not Liked"
+                             style="width: 60px;
+                                    height: 60px;"> like
+                        {% endif %}
+                    </button>
+                </form>
+
             </div>
-            <div class="comment">
-                <img src="{% static 'jobs/img/icon-comment/Android/icons8-comments-96(-xxxhdpi).png' %}"
-                     alt="Comment" width="60" height="60"> comment
-            </div>
+{#            <div class="comment">#}
+{#                <a href="{% url 'add_comment' job.pk %}">#}
+{#                    <img src="{% static 'jobs/img/icon-comment/Android/icons8-comments-96(-xxxhdpi).png' %}"#}
+{#                     alt="Comment" width="60" height="60"> comment#}
+{#                </a>#}
+{##}
+{#            </div>#}
         </div>
     </div>
 
-    <h3>Comments</h3>
+    {% if comments %}
+        <h2 style="margin: 30px 0 0 50px; text-decoration: underline;">Comments</h2>
     {% for comment in comments %}
         <div class="comment-jumbotron"
          style="width: 50%;
@@ -68,16 +133,26 @@
             {% if request.user.is_authenticated %}
                 <form action="{% url 'hide_comment' comment.pk %}" method="post">
                     {% csrf_token %}
+                    {% if job.employer == request.user %}
                     {% if comment.is_hidden %}
                     <input type="submit" class="btn btn-success" value="Restore">
                     {% else %}
                     <input type="submit" class="btn btn-danger" value="Hide">
+                    {% endif %}
                     {% endif %}
                 </form>
             {% endif %}
 
         </div>
     {% endfor %}
+    {% endif %}
+    <hr style="color: #fff; margin: 40px 0;">
+    <h3 style="margin: 30px 0 30px 50px; text-decoration: underline;">Add New Comment</h3>
+    <form action="" method="post" style="margin: 0 50px;">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Add Comment">
+    </form>
 
 
 

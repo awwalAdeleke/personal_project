@@ -2,29 +2,66 @@
 {% load static %}
 
 {% block content %}
-    {% for jobvacancy in jobvacancy_list %}
-        <div class="jumbotron">
-            <div class="jumbotron-header">
-                <div class="company-logo">
-                    <a href="{% url 'job_detail' jobvacancy.pk %}"><img src="{{ jobvacancy.company_logo.url }}" alt="company-logo"></a>
-                </div>
-                <div class="company-details">
-                    <p>{{ jobvacancy.position }}</p>
-                    <p>{{ jobvacancy.company_name }}</p>
-                    <p>{{ jobvacancy.address }} ({{ jobvacancy.location }})</p>
-                </div>
+    <div style="display: grid;
+            grid-template-columns: 1fr 1fr;
+            column-gap: 50px;
+            row-gap: 50px;
+            margin: auto;">
+            {% for job in jobvacancy_list %}
+
+                    <div class="jumbotron" style="text-align: left;
+                    width: 400px;
+                    height: 220px;
+                    margin: auto;
+                    padding: 30px;">
+                        <div class="container-fluid">
+                            <div class="jumbotron-header"
+                             style="display: grid;
+                             grid-template-columns: 1fr 2fr;
+                             column-gap: 20px;
+                             margin-bottom: 15px;">
+                                <div class="company-logo" style="width: 80px;
+                                height: 80px;
+                                display: flex;
+                                place-content: center;
+                                background-color: white;
+                                text-align: center;">
+                                    <img src="{{ job.company_logo.url }}" alt="company-logo"
+                                    style="width: 60px;
+                                    height: 17px;
+                                    margin: auto;">
+                                </div>
+                                <div class="company-details">
+                                    <p style="margin: 5px;">
+                                        <a href="{% url 'job_detail' job.pk %}">
+                                            <b>{{ job.position.upper }}</b>
+                                        </a>
+                                    </p>
+                                    <p style="margin: 5px;"><b>{{ job.company_name }}</b></p>
+                                    <p style="margin: 5px;">{{ job.address }} (<b>{{ job.location }}</b>)</p>
+                                </div>
+                            </div>
+                            <div style="line-height: 30px;">
+                                <div class="applicant-number">
+                                    <img src="{% static 'jobs/img/icon-apply/icons8-apply-50.png' %}"
+                                         alt="Numbers of applicants"
+                                         style="width: 24px;
+                                         height: 24px;">
+                                    <small>23 applied</small>
+                                </div>
+                                <div class="time-elapsed">
+                                    <img src="{% static 'jobs/img/icon-time-machine/icons8-time-machine-45(-hdpi).png' %}"
+                                     alt="Time elapsed"
+                                     style="width: 24px;
+                                     height: 24px;">
+                                    <small>{{ job.created|timesince }} ago</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+            {% endfor %}
             </div>
-            <div>
-                <div class="applicant-number">
-                    <img src="{% static 'jobs/img/icon-apply/icons8-apply-50.png' %}"
-                         alt="Numbers of applicants" width="24" height="24"> 23 applied
-                </div>
-                <div class="time-elapsed">
-                    <img src="{% static 'jobs/img/icon-time-machine/icons8-time-machine-45(-hdpi).png' %}"
-                         alt="Time elapsed" width="24" height="24"> {{ jobvacancy.created|timesince }} ago
-                </div>
-            </div>
-        </div>
-    {% endfor %}
 
 {% endblock %}

@@ -129,19 +129,19 @@
                    outline: none;">
         </form>
         {% if jobs %}
-            <p>There are {{ job_count }} jobs available.</p>
+            <p style="margin: 30px;">There are {{ job_count }} jobs available.</p>
             <div style="display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            column-gap: 30px;
-            row-gap: 30px;
+            grid-template-columns: 1fr 1fr;
+            column-gap: 50px;
+            row-gap: 50px;
             margin: auto;">
             {% for job in jobs %}
 
                     <div class="jumbotron" style="text-align: left;
                     width: 400px;
-                    height: 190px;
+                    height: 220px;
                     margin: auto;
-                    padding: 10px;">
+                    padding: 30px;">
                         <div class="container-fluid">
                             <div class="jumbotron-header"
                              style="display: grid;
@@ -191,11 +191,17 @@
 
             {% endfor %}
             </div>
+            <p style="text-decoration: underline;
+            margin: 30px;
+            width: 150px;
+            font-weight: bold;
+            font-size: 20px;"><a href="{% url 'job_list' %}" style="color: #ffffff;">See more...</a></p>
             {% else %}
             <h3 style="padding-top: 30px;">Hello, our esteemed visitor! There are no jobs available!</h3>
 
 
         {% endif %}
+
 
 
 

@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}
     Create A Job
@@ -8,6 +9,9 @@
     .errorlist{
         display: none;
     }
+    .django-ckeditor-widget{
+        display: block;
+    }
 {% endblock %}
 
 {% block content %}
@@ -15,8 +19,10 @@
         {% csrf_token %}
         {% for field in form.visible_fields %}
             <div class="fieldWrapper" style="padding-bottom: 10px;">
+                {{ form.media }}
                 {{ field.errors }}
-                {{ field.label_tag }} {{ field }}
+                {{ field.label_tag }}
+                {{ field }}
             </div>
         {% endfor %}
         <input type="submit" class="form-control"
@@ -28,4 +34,24 @@
              width: 300px;
              height: 50px;" value="Post Job">
     </form>
+{% endblock %}
+
+{% block extrahead %}
+<script>
+    window.CKEDITOR_BASEPATH = '/static/ckeditor/ckeditor/';
+</script>
+<script src="https://cdn.ckeditor.com/4.19.1/standard-all/ckeditor.js"></script>
+<script type="text/javascript" src="{% static 'ckeditor/ckeditor-init.js' %}"></script>
+<script type="text/javascript" src="{% static 'ckeditor/ckeditor/ckeditor.js' %}"></script>
+<script>
+    CKEDITOR.replace('editor1', {
+      extraPlugins: 'autogrow',
+      autoGrow_minHeight: 200,
+      autoGrow_maxHeight: 600,
+      autoGrow_bottomSpace: 50,
+      removePlugins: 'resize',
+      removeButtons: 'PasteFromWord'
+    });
+</script>
+{{ block.super }}
 {% endblock %}

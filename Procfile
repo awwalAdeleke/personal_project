@@ -1,0 +1,1 @@
+web: gunicorn ats_personal_project.wsgi
