@@ -1,15 +1,16 @@
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.contrib.auth.models import User, Permission
 from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy, reverse
 from django.views.generic import CreateView, ListView, DetailView
 
-from .forms import CreateJobForm, CommentForm, EmployerForm
-from .models import Comment, JobVacancy
+from .forms import CreateJobForm, CommentForm, EmployerForm, ApplicantForm
+from .models import Comment, JobVacancy, Employer
 
 
 # Create your views here.
@@ -62,45 +63,55 @@ def logout_page(request):
 
 
 def register_user(request):
-    form = EmployerForm()
+    if 'employer' in request.get_full_path():
+        form = EmployerForm()
+    else:
+        form = ApplicantForm()
 
     if request.method == 'POST':
-        form = EmployerForm(request.POST)
+        if 'employer' in request.get_full_path():
+            form = EmployerForm(request.POST)
+        else:
+            form = ApplicantForm(request.POST)
 
         if form.is_valid():
             user = form.save(commit=False)
             user.username = user.username.lower()
             user.save()
+            if 'company' in form.cleaned_data:
+                permission = Permission.objects.filter(name='Can Create Job').first()
+                user.user_permissions.add(permission)
+                user.save()
+
             login(request, user)
             return redirect('home')
         else:
             messages.error(request, 'An error occurred during registration!')
-
     context = {'form': form}
     return render(request, 'registration/login.html', context)
 
 
 def home(request):
-    jobs = JobVacancy.objects.all()
+    jobs = JobVacancy.active_jobs.all()
     search = request.GET.get('q') if request.GET.get('q') is not None else ""
-    if request.user.is_authenticated:
-        jobs = JobVacancy.objects.filter(
-            Q(position__icontains=search) |
-            Q(company_name__icontains=search) |
-            Q(address__icontains=search) |
-            Q(location__name__icontains=search) |
-            Q(employee_type__name__icontains=search) |
-            Q(experience_level__name__icontains=search)
-        )
-    else:
-        jobs = JobVacancy.active_jobs.filter(
-            Q(position__icontains=search) |
-            Q(company_name__icontains=search) |
-            Q(address__icontains=search) |
-            Q(location__name__icontains=search) |
-            Q(employee_type__name__icontains=search) |
-            Q(experience_level__name__icontains=search)
-        )
+    # if request.user.is_authenticated:
+    #     jobs = JobVacancy.objects.filter(
+    #         Q(position__icontains=search) |
+    #         Q(company_name__icontains=search) |
+    #         Q(address__icontains=search) |
+    #         Q(location__name__icontains=search) |
+    #         Q(employee_type__name__icontains=search) |
+    #         Q(experience_level__name__icontains=search)
+    #     )
+    # else:
+    jobs = JobVacancy.active_jobs.filter(
+        Q(position__icontains=search) |
+        Q(company_name__icontains=search) |
+        Q(address__icontains=search) |
+        Q(location__name__icontains=search) |
+        Q(employee_type__name__icontains=search) |
+        Q(experience_level__name__icontains=search)
+    )
     job_count = jobs.count()
     context = {
         'jobs': jobs[:4],
@@ -110,6 +121,7 @@ def home(request):
 
 
 @login_required(login_url='login')
+@permission_required('main_app.can_create_job', raise_exception=True)
 def create_job(request):
     form = CreateJobForm()
     if request.method == 'POST':
@@ -150,10 +162,22 @@ class JobListView(ListView):
     template_name = 'job_list.html'
 
     def get_queryset(self):
-        if self.request.user.is_authenticated:
-            return JobVacancy.objects.all()
-        else:
-            return JobVacancy.active_jobs.all()
+        return JobVacancy.active_jobs.all()
+
+
+class EmployerJobListView(PermissionRequiredMixin, JobListView):
+    model = JobVacancy
+    paginate_by = 5
+    template_name = 'job_list.html'
+    permission_required = 'main_app.can_create_job'
+
+    def get_queryset(self):
+        return JobVacancy.objects.filter(employer=self.request.user)
+
+    def get_context_data(self, **kwargs):
+        context = super(EmployerJobListView, self).get_context_data()
+        context['employer_job_list'] = True
+        return context
 
 
 def job_detail(request, pk):

@@ -12,7 +12,7 @@
     {% if page == 'login' %}
         <h2 style="margin-left: 50px;">Login...</h2>
     {% else %}
-        <h2 style="margin-left: 50px;">Register...</h2>
+        <h2 style="margin-left: 50px;">Register as Administrator or Site Visitor...</h2>
     {% endif %}
     {% if messages %}
         <ul class="messages" style=" margin-left: 35%;">
@@ -55,7 +55,8 @@
         </form>
         <div class="login" style="text-align: center; font-size: 15px;">
             <p>Haven't Signed up yet?</p>
-            <a href="{% url 'register' %}">Sign up</a>
+            <a href="{% url 'employer_register' %}" style="margin-right: 50px;">Sign up as an employer</a>
+            <a href="{% url 'applicant_register' %}">Sign up as an applicant</a>
         </div>
 
     </div>

@@ -41,7 +41,7 @@
 
 </head>
 <body style="background-color: #A4B3E8;">
-    <nav class="navbar navbar-expand-lg" style="width: 100%; background-color: #22417B; padding: 20px 30px;">
+    <nav class="navbar navbar-expand-lg" style="width: 100%; background-color: #22417B; padding: 20px 100px 20px 30px;">
 
         <div class="container-fluid">
           <a class="navbar-brand" href="{% url 'home' %}"
@@ -82,6 +82,17 @@
 
 
               {% if user.is_authenticated %}
+                  <li class="nav-item">
+                      <a class="nav-link" href="{% url 'employer_job_list' %}"
+                         style="color: #fff;
+                    font-family: 'Raleway', sans-serif;
+                    padding-right: 20px;
+                    text-align: right;
+                    margin-top: 10px;
+                    border-bottom: 1px solid #fff;">My Jobs</a>
+                  </li>
+
+
                 <li class="nav-item">
                   <a class="nav-link" href="{% url 'add_job' %}"
                      style="color: #fff;
@@ -112,14 +123,38 @@
                         margin-top: 10px;
                         border-bottom: 1px solid #fff;">Sign In</a>
                     </li>
-                    <li class="nav-item">
-                      <a class="nav-link" href="{% url 'register' %}"
-                         style="color: #fff;
+                    <li class="nav-item dropdown">
+                      <a style="color: #fff;
                         font-family: 'Raleway', sans-serif;
                         padding-right: 20px;
                         text-align: right;
                         margin-top: 10px;
-                        border-bottom: 1px solid #fff;" >Sign Up</a>
+                        border-bottom: 1px solid #fff;"
+                         class="nav-link dropdown-toggle"
+                         href="#" id="navbarDropdown"
+                         role="button"
+                         data-bs-toggle="dropdown"
+                         aria-expanded="false">
+                        Sign Up
+                      </a>
+                      <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li>
+                            <a class="dropdown-item"
+                           href="{% url 'employer_register' %}"
+                           style="color: #22417B;
+                            font-family: 'Raleway', sans-serif;
+                            padding-right: 20px;
+                            margin-top: 10px;
+                            border-bottom: 1px solid #fff;">Employer</a></li>
+                        <li>
+                            <a class="dropdown-item"
+                               href="{% url 'applicant_register' %}"
+                               style="color: #22417B;
+                               font-family: 'Raleway', sans-serif;
+                               padding-right: 20px;
+                               margin-top: 10px;
+                               border-bottom: 1px solid #fff;">Applicant</a></li>
+                      </ul>
                     </li>
                     {% endif %}
                 </ul>

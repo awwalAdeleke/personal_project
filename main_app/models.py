@@ -104,3 +104,11 @@ class Comment(models.Model):
     def __str__(self):
         return self.comment_message
 
+
+class Employer(User):
+    job_position = models.CharField(max_length=255)
+    company = models.CharField(max_length=255)
+
+    class Meta:
+        permissions = (('can_create_job', "Can Create Job"),)
+

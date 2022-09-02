@@ -4,8 +4,9 @@ from ckeditor_uploader.widgets import CKEditorUploadingWidget
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from django.forms import CharField
 
-from .models import JobVacancy, Comment, EmployeeType, Location, ExperienceLevel
+from .models import JobVacancy, Comment, EmployeeType, Location, ExperienceLevel, Employer
 
 
 class CreateJobForm(forms.Form):
@@ -59,7 +60,27 @@ class CommentForm(forms.ModelForm):
 
 class EmployerForm(UserCreationForm):
     password1 = forms.CharField(widget=forms.PasswordInput(
-        attrs={"class": "form-control","autocomplete": "new-password"}), label="Password:")
+        attrs={"class": "form-control", "autocomplete": "new-password"}), label="Password:")
+    password2 = forms.CharField(widget=forms.PasswordInput(
+        attrs={'class': 'form-control', 'autocomplete': 'new-password'}), label="Password Confirmation:")
+
+    class Meta:
+        model = Employer
+        fields = ['username', 'email', 'password1', 'password2', 'job_position', 'company']
+
+        widgets = {
+            'username': forms.TextInput(attrs={"class": "form-control", 'type': 'text'}),
+            'email': forms.EmailInput(attrs={"class": "form-control", 'type': 'email'}),
+            'password1': forms.PasswordInput(attrs={"class": "form-control", 'type': 'password'}),
+            'password2': forms.PasswordInput(attrs={"class": "form-control", 'type': 'password'}),
+            'job_position': forms.TextInput(attrs={"class": "form-control", 'type': 'text'}),
+            'company': forms.TextInput(attrs={"class": "form-control", 'type': 'text'}),
+        }
+
+
+class ApplicantForm(UserCreationForm):
+    password1 = forms.CharField(widget=forms.PasswordInput(
+        attrs={"class": "form-control", "autocomplete": "new-password"}), label="Password:")
     password2 = forms.CharField(widget=forms.PasswordInput(
         attrs={'class': 'form-control', 'autocomplete': 'new-password'}), label="Password Confirmation:")
 
