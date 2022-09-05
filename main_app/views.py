@@ -174,11 +174,6 @@ class EmployerJobListView(PermissionRequiredMixin, JobListView):
     def get_queryset(self):
         return JobVacancy.objects.filter(employer=self.request.user)
 
-    def get_context_data(self, **kwargs):
-        context = super(EmployerJobListView, self).get_context_data()
-        context['employer_job_list'] = True
-        return context
-
 
 def job_detail(request, pk):
     job = JobVacancy.objects.get(id=pk)
